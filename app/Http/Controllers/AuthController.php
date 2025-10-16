@@ -12,9 +12,9 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|string|email|unique:users,email',
-            'password' => 'required|string|min:5|confirmed'
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:8|confirmed'
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
@@ -27,7 +27,8 @@ class AuthController extends Controller
                 'message' => 'Registration Successful!',
                 'user' => $user,
             ], 200);
-        } catch (\Exception $exception) {
+        } 
+        catch (\Exception $exception) {
             return response()->json([
                 'Error' => "Registration Failed!",
                 'Message' => $exception->getMessage()

@@ -72,7 +72,8 @@ class RoleController extends Controller
             return response()->json([
                 'Role' => $role,
             ], 200);
-        } catch (\Exception $exception) {
+        } 
+        catch (\Exception $exception) {
             return response()->json([
                 'Error' => "Failed to Update Role",
             ], 500);
