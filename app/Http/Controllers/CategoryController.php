@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
@@ -45,7 +46,7 @@ class CategoryController extends Controller
         } 
         catch (\Exception $exception) {
             return response()->json([
-                'Error' => "Failed to Fetch Categorys",
+                'Error' => "Failed to Fetch Category",
             ], 500);
         }
     }
@@ -102,6 +103,9 @@ class CategoryController extends Controller
                     'Error' =>$exception->getMessage(),
                     'message'=>"Failed to Delete Category"
             ], 500);
+        }
+        else{
+            return "Category was not found";
         }
     }
 }

@@ -13,7 +13,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|min:4',
             'email' => 'required|string',
-            'password' => 'nullable|min:3'
+            'password' => 'nullable|min:8'
         ]);
 
         $user = new User();

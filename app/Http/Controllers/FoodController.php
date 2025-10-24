@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Food;
 use Illuminate\Http\Request;
 
@@ -52,7 +53,7 @@ class FoodController extends Controller
             }
         } catch (\Exception $exception) {
             return response()->json([
-                'error' => 'Failed to fetch Food',
+                'error' => 'Failed to fetch food',
                 'message' => $exception->getMessage()
             ], 500);
         }
@@ -67,7 +68,7 @@ class FoodController extends Controller
             ], 200);
         } catch (\Exception $exception) {
             return response()->json([
-                'error' => 'Failed to fetch Food',
+                'error' => 'Failed to fetch food',
                 'message' => $exception->getMessage()
             ], 500);
         }
@@ -100,7 +101,7 @@ class FoodController extends Controller
             ], 200);
         } catch (\Exception $exception) {
             return response()->json([
-                'error' => 'Failed to update Food',
+                'error' => 'Failed to update food',
                 'message' => $exception->getMessage()
             ], 500);
         }
@@ -118,7 +119,7 @@ class FoodController extends Controller
             } catch (\Exception $exception) {
                 return response()->json([
                     'error' => $exception->getMessage(),
-                    'message' => 'Failed to delete'
+                    'message' => 'Failed to delete food'
                 ], 500);
             }
         } else {

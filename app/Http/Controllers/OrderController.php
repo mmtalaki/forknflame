@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
 
@@ -9,7 +10,7 @@ class OrderController extends Controller
 {
     public function store(Request $request){
         $request->validate([
-            'quantity'=>'required|double',
+            'quantity'=>'required|double|min:4',
             'status'=>'required|string',
             'user_id'=>'required|integer|exists:users,id',
             'food_id'=>'required|integer|exists:food,id'
