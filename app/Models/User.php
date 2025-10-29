@@ -22,6 +22,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'user_image',
+        'is_active',
+        'role_id',
     ];
 
     /**
@@ -44,6 +47,39 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+        ];
+    }
+
+    public function role(){
+        return $this->belongsTo(Role::class);
+    }
+
+    public function is_active(){
+    }
+
+    public function isAdmin(){
+        return $this->role->slug === "administrator";
+    }
+
+    public function isUser(){
+        return $this->role->slug === "user";
+    }
+
+    public function isEditor(){
+        return $this->role->slug === "editor";
+    }
+
+    public function isCustomer(){
+        return $this->role->slug === "customer";
+    }
+
+    public function abilities(){
+        $this->role->id ?? null;
+        return[
+            'admin'=>$this->isAdmin(),
+            'user'=>$this->isUser(),
+            'editor'=>$this->isEditor(),
+            'customer'=>$this->isCustomer(),
         ];
     }
 }

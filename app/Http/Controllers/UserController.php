@@ -11,9 +11,12 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|min:4',
+            'name' => 'required|string',
             'email' => 'required|string',
-            'password' => 'nullable|min:8'
+            'password' => 'nullable|min:5',
+            'user_image' => 'nullable|mimes:jpeg,png,jpg|max:2048',
+            'is_active' => 'required|boolean',
+            'role_id'  => 'required|integer|exists:roles,id'
         ]);
 
         $user = new User();
@@ -26,7 +29,8 @@ class UserController extends Controller
             return response()->json([
                 'User' => $user
             ], 200);
-        } catch (\Exception $exception) {
+        } 
+        catch (\Exception $exception) {
             return response()->json([
                 'error' => 'Failed to save User',
                 'message' => $exception->getMessage()
@@ -37,7 +41,7 @@ class UserController extends Controller
     public function index()
     {
         try {
-            $user = user::all();
+            $user = User::all();
             if ($user) {
                 return response()->json([
                     'User' => $user
@@ -45,7 +49,8 @@ class UserController extends Controller
             } else {
                 return "No User was found.";
             }
-        } catch (\Exception $exception) {
+        } 
+        catch (\Exception $exception) {
             return response()->json([
                 'error' => 'Failed to fetch User',
                 'message' => $exception->getMessage()
@@ -60,7 +65,8 @@ class UserController extends Controller
             return response()->json([
                 'User' => $User
             ], 200);
-        } catch (\Exception $exception) {
+        } 
+        catch (\Exception $exception) {
             return response()->json([
                 'error' => 'Failed to fetch User',
                 'message' => $exception->getMessage()
@@ -73,21 +79,33 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         $request->validate([
-            'name' => 'required|string|min:4',
+            'name' => 'required|string',
             'address' => 'required|string',
-            'description' => 'nullable|max:1000'
+            'password' => 'required|min:5',
+            'user_image' => 'required|mimes:jpeg,png,jpg|max:2048',
+            'is_active' => 'required|boolean',
+            'role_id'  => 'required|integer|exists:roles,id'
         ]);
         
         $user->name = $request->name;
-        $user->address = $request->address;
-        $user->description = $request->description;
+        $user->email = $request->email;
+        $user->password = $request->password;
+
+        if($request->hasFile('user_image')){
+            $fileName = $request->file('user_image')->store('posts', 'public');
+        }
+        else{
+            $fileName = null;
+        }
+        $user->user_image = $fileName;
 
         try {
             $user->save();
             return response()->json([
                 'User' => $user
             ], 200);
-        } catch (\Exception $exception) {
+        } 
+        catch (\Exception $exception) {
             return response()->json([
                 'error' => 'Failed to update User',
                 'message' => $exception->getMessage()

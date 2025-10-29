@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -14,13 +15,15 @@ class AuthController extends Controller
         $validated = $request->validate([
             'name' => 'required|string',
             'email' => 'required|string|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed'
+            'password' => 'required|string|min:5|confirmed'
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
 
-        try {
+        $role = Role::where('slug','user')->first()->id;
+        $validated['role_id'] = $role;
 
+        try {
             $user = User::create($validated);
 
             return response()->json([
@@ -46,21 +49,24 @@ class AuthController extends Controller
         try {
             $user = User::where('email', $validated['email'])->first();
 
-            if (! $user || ! Hash::check($validated['password'], $user->password)) {
+            if (!$user || !Hash::check($validated['password'], $user->password)) {
                 throw ValidationException::withMessages([
                     'email' => ['The provided credentials are incorrect.'],
-                ]);
+                ], 401);
             }
 
-            $token = $user->createToken('auth-token')->plainTextToken;
+            $token = $user->createToken("auth-token")->plainTextToken;
             return response()->json([
-                'message' => 'Login Successful!',
+                'message' => 'LogIn Successful!',
                 'user' => $user,
-                'token' => $token
-            ], 200);
-        } catch (\Exception $exception) {
+                'token' => $token,
+                'abilities'=>$user->abilities()
+            ], 201);
+        }
+
+        catch (\Exception $exception) {
             return response()->json([
-                'Error' => "Registration Failed!",
+                'Error' => "LogIn Failed!",
                 'Message' => $exception->getMessage()
             ], 500);
         }
@@ -70,7 +76,7 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
         return response()->json([
-            'message' => 'Logout Successful!'
+            'message' => 'LogOut Successful!'
         ], 200);
     }
 }
