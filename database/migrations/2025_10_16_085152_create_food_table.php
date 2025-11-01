@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Category;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,6 +17,7 @@ return new class extends Migration
             $table->double('price');
             $table->string('description', 2000);
             $table->string('food_code', 10);
+            $table->string('food_image', 200)->nullable();
             
             $table->unsignedBigInteger('category_id');
             $table->unsignedBigInteger('restaurant_id');

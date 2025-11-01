@@ -14,6 +14,7 @@ class FoodController extends Controller
             'price'=>'required|double',
             'description'=>'required|max:2000',
             'food_code'=>'required|string|max:10',
+            'food_image' => 'nullable|mimes:jpeg,png,jpg|max:2048',
             'category_id'=>'required|integer|exists:categories,id',
             'restaurant_id'=>'required|integer|exists:restaurants,id'
         ]);
@@ -23,10 +24,16 @@ class FoodController extends Controller
         $food->price = $request->price;
         $food->description = $request->description;
         $food->food_code = $request->food_code;
+        // $food->food_image = $request->food_image;
         $food->category_id = $request->category_id;
         $food->restaurant_id = $request->restaurant_id;
-
-
+        
+        if($request->hasFile('food_image')){
+            $fileName = $request->file('food_image')->store('food', 'public');
+        } else{
+            $fileName = null;
+        }
+        $food->food_image = $fileName;
         try{
             $food->save();
             return response()->json([
