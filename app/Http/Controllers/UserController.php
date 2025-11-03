@@ -11,9 +11,9 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|string',
-            'password' => 'nullable|min:5',
+            'name' => 'required|string\min:3',
+            'email' => 'required|string|email',
+            'password' => 'required|string|min:5',
             'user_image' => 'nullable|mimes:jpeg,png,jpg|max:2048',
             'is_active' => 'required|boolean',
             'role_id'  => 'required|integer|exists:roles,id'
@@ -23,6 +23,7 @@ class UserController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = $request->password;
+        $user->role_id = $request->role_id;
 
         try {
             $user->save();
@@ -41,12 +42,16 @@ class UserController extends Controller
     public function index()
     {
         try {
-            $user = User::all();
+            // $user = User::all();
+            $user = User::join('roles', 'users.role_id', '=', 'roles.id')
+                        ->select('users.*', 'roles.name as role_name')
+                        ->get();
             if ($user) {
                 return response()->json([
                     'User' => $user
                 ], 200);
-            } else {
+            } 
+            else {
                 return "No User was found.";
             }
         } 
@@ -79,9 +84,9 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         $request->validate([
-            'name' => 'required|string',
-            'address' => 'required|string',
-            'password' => 'required|min:5',
+            'name' => 'required|string|min:3',
+            'address' => 'required|string|email',
+            'password' => 'required|string|min:5',
             'user_image' => 'required|mimes:jpeg,png,jpg|max:2048',
             'is_active' => 'required|boolean',
             'role_id'  => 'required|integer|exists:roles,id'
@@ -90,6 +95,7 @@ class UserController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = $request->password;
+        $user->role_id = $request->role_id;
 
         if($request->hasFile('user_image')){
             $fileName = $request->file('user_image')->store('posts', 'public');

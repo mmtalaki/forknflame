@@ -10,7 +10,7 @@ class FoodController extends Controller
 {
     public function store(Request $request){
         $request->validate([
-            'name'=>'required|string|min:4',
+            'name'=>'required|string|min:3',
             'price'=>'required|double',
             'description'=>'required|max:2000',
             'food_code'=>'required|string|max:10',
@@ -50,7 +50,11 @@ class FoodController extends Controller
     public function index()
     {
         try {
-            $food = Food::all();
+            // $food = Food::all();
+            $food = Food::join('categories', 'food.category_id', '=', 'categories.id')
+                ->join('restaurants', 'food.restaurant_id', '=', 'restaurants.id')
+                ->select('food.*', 'categories.name as category_name', 'restaurants.name as restaurant_name')
+                ->get();
             if ($food) {
                 return response()->json([
                     'Food' => $food
@@ -86,7 +90,7 @@ class FoodController extends Controller
         $food = Food::findOrFail($id);
 
         $request->validate([
-            'name' => 'required|string|min:4',
+            'name' => 'required|string|min:3',
             'price' => 'required',
             'description' => 'required|max:2000',
             'food_code' => 'required|string|max:10',
@@ -106,7 +110,8 @@ class FoodController extends Controller
             return response()->json([
                 'Food' => $food
             ], 200);
-        } catch (\Exception $exception) {
+        } 
+        catch (\Exception $exception) {
             return response()->json([
                 'error' => 'Failed to update food',
                 'message' => $exception->getMessage()
