@@ -18,7 +18,6 @@ class OrderController extends Controller
             'user_id'=>'required|integer|exists:users,id',
             'food_id'=>'required|integer|exists:food,id'
         ]);
-
         $order = new Order();
         $order->quantity = $request->quantity;
         $order->order_amount = $request->order_amount;
@@ -119,7 +118,9 @@ class OrderController extends Controller
         ]);
 
         $order->quantity = $request->quantity;
+        $order->order_amount = $request->order_amount;
         $order->status = $request->status;
+        $order->order_code = $order->order_code;
         $order->user_id = $request->user_id;
         $order->food_id = $request->food_id;
 
@@ -175,13 +176,16 @@ class OrderController extends Controller
     public function getUserBalance($userId)
     {
         $totalOrders = Order::where('user_id', $userId)->sum('order_amount');
-        $totalPayments = \App\Models\Payment::where('user_id', $userId)->sum('amount_paid');
-        $balance = $totalPayments - $totalOrders;
+        // $totalPayments = \App\Models\Payment::where('user_id', $userId)->sum('amount_paid');
+        $totalPayments = \App\Models\Payment::join('orders', 'payments.order_id', '=', 'orders.id')
+            ->where('orders.user_id', $userId)
+            ->sum('payments.amount_paid');
+        $balance = round($totalPayments - $totalOrders, 2);
 
         return response()->json([
             'balance' => $balance,
-            'total_orders' => $totalOrders,
-            'total_payments' => $totalPayments,
-        ]);
+            'total_orders' => round($totalOrders, 2),
+            'total_payments' => round($totalPayments, 2),
+        ], 200);
     }
 }

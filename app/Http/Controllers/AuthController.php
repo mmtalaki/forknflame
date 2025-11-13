@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use App\Models\User;
+use App\Notifications\VerifyEmailNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -26,10 +28,18 @@ class AuthController extends Controller
         try {
             $user = User::create($validated);
 
+            $signedUrl = URL::temporarySignedRoute(
+                'verification.verify',
+                now()->addMinutes(60),
+                ['id'=>$user->id, 'hash'=>sha1($user->email)]
+            );
+
+            $user->notify(new VerifyEmailNotification($signedUrl));
+
             return response()->json([
-                'message' => 'Registration Successful!',
+                'message' => 'Registration Successful! A Verification Email Has been sent to You.',
                 'user' => $user,
-            ], 200);
+            ], 201);
         } 
         catch (\Exception $exception) {
             return response()->json([

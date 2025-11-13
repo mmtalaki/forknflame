@@ -5,9 +5,11 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ResendVerificationController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VerificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,6 +18,14 @@ Route::get('/getRoles', [RoleController::class, 'index']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+// Email Verification
+Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])
+    ->name('verification.verify')
+    ->middleware(['signed', 'throttle:6,1']);
+
+// Resend verification
+Route::post('/email/resend', [ResendVerificationController::class, 'resend'])
+    ->middleware('throttle:6,1');
 
 //Protected Routes
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -64,5 +74,4 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/getPayment/{id}', [PaymentController::class, 'show']);
     Route::post('/updatePayment/{id}', [PaymentController::class, 'update']);
     Route::post('/deletePayment/{id}', [PaymentController::class, 'delete']);
-    Route::post('/calculate-user-balance', [PaymentController::class, 'calculateUserBalance']);
 });

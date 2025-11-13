@@ -135,34 +135,4 @@ class PaymentController extends Controller
             return "Payment was not found";
         }
     }
-    public function calculateUserBalance(Request $request)
-    {
-        $request->validate([
-            'user_id' => 'required|integer|exists:users,id',
-        ]);
-
-        $userId = $request->user_id;
-
-        // orders_sum: sum of (food.price * orders.quantity) for this user
-        $ordersSum = DB::table('orders')
-            ->join('food', 'orders.food_id', '=', 'food.id')
-            ->where('orders.user_id', $userId)
-            ->select(DB::raw('COALESCE(SUM(food.price * orders.quantity),0) as orders_sum'))
-            ->value('orders_sum');
-
-        // payments_sum: sum payments for orders that belong to this user
-        $paymentsSum = DB::table('payments')
-            ->join('orders', 'payments.order_id', '=', 'orders.id')
-            ->where('orders.user_id', $userId)
-            ->select(DB::raw('COALESCE(SUM(payments.amount_paid),0) as payments_sum'))
-            ->value('payments_sum');
-
-        $balanceDue = round((float)$ordersSum - (float)$paymentsSum, 2);
-
-        return response()->json([
-            'orders_sum'   => (float)$ordersSum,
-            'payments_sum' => (float)$paymentsSum,
-            'balance_due'  => (float)$balanceDue,
-        ], 200);
-    }
 }
