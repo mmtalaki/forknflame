@@ -14,9 +14,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 //Public Routes
-Route::get('/getRoles', [RoleController::class, 'index']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::get('/getRoles', [RoleController::class, 'index']);
 
 // Email Verification
 Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])
@@ -66,8 +66,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/getOrder/{id}', [OrderController::class, 'show']);
     Route::post('/updateOrder/{id}', [OrderController::class, 'update']);
     Route::post('/deleteOrder/{id}', [OrderController::class, 'delete']);
-    Route::post('/calculateOrder', [OrderController::class, 'calculateOrder']);
-    Route::get('/getUserBalance/{id}', [OrderController::class, 'getUserBalance']);
+    Route::post('/calculateOrder', [OrderController::class, 'calculate']);
+    Route::get('/getUserBalance/{id}', [OrderController::class, 'getbalance']);
 
     Route::post('/savePayment', [PaymentController::class, 'store']);
     Route::get('/getPayment', [PaymentController::class, 'index']);

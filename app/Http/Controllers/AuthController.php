@@ -39,7 +39,8 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Registration Successful! A Verification Email Has been sent to You.',
                 'user' => $user,
-            ], 201);
+                'statusCode' => 201
+            ]);
         } 
         catch (\Exception $exception) {
             return response()->json([
@@ -70,8 +71,9 @@ class AuthController extends Controller
                 'message' => 'LogIn Successful!',
                 'user' => $user,
                 'token' => $token,
-                'abilities'=>$user->abilities()
-            ], 201);
+                'abilities'=>$user->abilities(),
+                'statusCode' => 201
+            ]);
         }
 
         catch (\Exception $exception) {
@@ -86,7 +88,8 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
         return response()->json([
-            'message' => 'LogOut Successful!'
-        ], 200);
+            'message' => 'LogOut Successful!',
+            'statusCode' => 200
+        ]);
     }
 }

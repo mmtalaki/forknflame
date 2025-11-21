@@ -157,7 +157,7 @@ class OrderController extends Controller
             return "Order was not found";
         }
     }
-    public function calculateOrder(Request $request)
+    public function calculate(Request $request)
     {
         $request->validate([
             'food_id' => 'required|integer|exists:food,id',
@@ -173,7 +173,7 @@ class OrderController extends Controller
         return response()->json(['total' => $total]);
     }
 
-    public function getUserBalance($userId)
+    public function getbalance($userId)
     {
         $totalOrders = Order::where('user_id', $userId)->sum('order_amount');
         // $totalPayments = \App\Models\Payment::where('user_id', $userId)->sum('amount_paid');
