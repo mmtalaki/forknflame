@@ -28,7 +28,7 @@ class FoodController extends Controller
         $food->restaurant_id = $request->restaurant_id;
         
         if($request->hasFile('food_image')){
-            $fileName = $request->file('food_image')->store('food', 'public');
+            $fileName = $request->file('food_image')->store('food');
         } else{
             $fileName = null;
         }
@@ -61,7 +61,8 @@ class FoodController extends Controller
             } else {
                 return "No food was found.";
             }
-        } catch (\Exception $exception) {
+        } 
+        catch (\Exception $exception) {
             return response()->json([
                 'error' => 'Failed to fetch food',
                 'message' => $exception->getMessage()
@@ -127,13 +128,15 @@ class FoodController extends Controller
                 return response()->json([
                     'Food Deleted Successsfully!'
                 ], 200);
-            } catch (\Exception $exception) {
+            } 
+            catch (\Exception $exception) {
                 return response()->json([
                     'error' => $exception->getMessage(),
                     'message' => 'Failed to delete food'
                 ], 500);
             }
-        } else {
+        } 
+        else {
             return "Food was not found";
         }
     }

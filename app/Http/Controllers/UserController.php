@@ -39,6 +39,14 @@ class UserController extends Controller
         }
     }
 
+    public function getAUser(Request $request)
+    {
+        return response()->json([
+            'user' => $request->user(),
+            'statusCode' => 200
+        ]);
+    }
+
     public function index()
     {
         try {

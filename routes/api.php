@@ -31,6 +31,7 @@ Route::post('/email/resend', [ResendVerificationController::class, 'resend'])
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/getAUser', [UserController::class, 'getAUser']);
 
     Route::post('/saveUser', [UserController::class, 'store']);
     Route::get('/getUser', [UserController::class, 'index']);
